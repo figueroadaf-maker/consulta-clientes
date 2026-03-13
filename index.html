@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Consulta Seguimiento</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+}
+
+.container{
+width:900px;
+margin:50px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+input{
+width:70%;
+padding:10px;
+font-size:16px;
+}
+
+button{
+padding:10px 20px;
+font-size:16px;
+background:#2c7be5;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:8px;
+}
+
+th{
+background:#2c7be5;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Consulta Seguimiento</h2>
+
+<input id="busqueda" placeholder="Buscar por Código, Vendedor o DUI">
+<button onclick="buscar()">Buscar</button>
+
+<table>
+
+<thead>
+<tr>
+<th>NOMBRE DE CLIENTE</th>
+<th>DUI</th>
+<th>STATUS</th>
+<th>COMENTARIO</th>
+</tr>
+</thead>
+
+<tbody id="resultado"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+const url="https://docs.google.com/spreadsheets/d/17xxgASKCOoy7K64ApNTEoj6W5oVCqAGX4HJZXQdtnL4/gviz/tq?tqx=out:json&sheet=SEGUIMIENTO";
+
+let datos=[];
+
+async function cargarDatos(){
+
+let res = await fetch(url);
+let text = await res.text();
+
+let json = JSON.parse(text.substr(47).slice(0,-2));
+
+let rows = json.table.rows;
+
+datos = rows.map(r => ({
+
+cliente:r.c[3]?.v || "",   // D
+dui:r.c[4]?.v || "",       // E
+status:r.c[20]?.v || "",   // U
+comentario:r.c[23]?.v || "",// X
+
+busqueda1:r.c[26]?.v || "", // AA
+busqueda2:r.c[27]?.v || "", // AB
+busqueda3:r.c[4]?.v || ""   // E
+
+}));
+
+}
+
+function buscar(){
+
+let valor=document.getElementById("busqueda").value.toLowerCase();
+let tabla=document.getElementById("resultado");
+
+tabla.innerHTML="";
+
+let resultados=datos.filter(r =>
+
+r.busqueda1.toString().toLowerCase().includes(valor) ||
+r.busqueda2.toString().toLowerCase().includes(valor) ||
+r.busqueda3.toString().toLowerCase().includes(valor)
+
+);
+
+if(resultados.length==0){
+
+tabla.innerHTML="<tr><td colspan='4'>No se encontraron resultados</td></tr>";
+return;
+
+}
+
+resultados.forEach(r=>{
+
+tabla.innerHTML+=`
+<tr>
+<td>${r.cliente}</td>
+<td>${r.dui}</td>
+<td>${r.status}</td>
+<td>${r.comentario}</td>
+</tr>
+`;
+
+});
+
+}
+
+cargarDatos();
+
+setInterval(cargarDatos,5000);
+
+</script>
+
+</body>
+</html>
