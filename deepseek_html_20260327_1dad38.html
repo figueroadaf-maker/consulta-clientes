@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>CONSULTA CALIDAD - Comsertel</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #eef2f7;
+            margin: 0;
+            padding: 12px;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0b3b4f 0%, #1a5f7a 100%);
+            padding: 20px 18px;
+            color: white;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: space-between;
+        }
+        
+        .header h1 small {
+            font-size: 0.65rem;
+            background: rgba(255,255,255,0.2);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-weight: 400;
+        }
+        
+        .admin-badge {
+            background: #ff9800;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .user-badge {
+            background: rgba(255,255,255,0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+        
+        .content {
+            padding: 16px;
+        }
+        
+        .sheet-manager {
+            background: linear-gradient(135deg, #e8f0f5 0%, #d9e4ec 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #cbdde6;
+        }
+        
+        .sheet-selector-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .sheet-selector-row select {
+            flex: 3;
+            min-width: 150px;
+        }
+        
+        .btn-icon {
+            flex: 0 0 auto;
+            width: 44px;
+            padding: 12px;
+            background: #1f6e8c;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-icon:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-icon.edit {
+            background: #ff9800;
+        }
+        
+        .btn-icon.edit:active {
+            background: #f57c00;
+        }
+        
+        .btn-icon.add {
+            background: #4caf50;
+        }
+        
+        .btn-icon.add:active {
+            background: #388e3c;
+        }
+        
+        .btn-icon.share {
+            background: #2196f3;
+        }
+        
+        .btn-icon.share:active {
+            background: #1976d2;
+        }
+        
+        .btn-icon.admin-login {
+            background: #9c27b0;
+        }
+        
+        .btn-icon.admin-login:active {
+            background: #7b1fa2;
+        }
+        
+        .sheet-status {
+            margin-top: 10px;
+            font-size: 0.7rem;
+            color: #2c6b7e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .sheet-badge {
+            background: rgba(31,110,140,0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content h3 {
+            margin: 0 0 16px 0;
+            color: #0b3b4f;
+        }
+        
+        .modal-content input, .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbdde6;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+        
+        .modal-content textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+        }
+        
+        .btn-cancel {
+            background: #95a5a6;
+        }
+        
+        .btn-cancel:active {
+            background: #7f8c8d;
+        }
+        
+        .login-input {
+            margin-bottom: 16px;
+        }
+        
+        .login-input input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbdde6;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+        
+        .lista-hojas {
+            margin-top: 12px;
+            border-top: 1px solid #d0e2ec;
+            padding-top: 12px;
+        }
+        
+        .lista-hojas-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #e2edf2;
+            font-size: 0.8rem;
+        }
+        
+        .lista-hojas-item:last-child {
+            border-bottom: none;
+        }
+        
+        .lista-hojas-item .nombre {
+            font-weight: 600;
+            color: #1a4c60;
+            flex: 1;
+        }
+        
+        .lista-hojas-item .url {
+            font-size: 0.65rem;
+            color: #7895a3;
+            flex: 2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .lista-hojas-item .acciones {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .lista-hojas-item .acciones button {
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            width: auto;
+        }
+        
+        .filtros-card {
+            background: #f8fafd;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e2edf2;
+        }
+        
+        .filtro-group {
+            margin-bottom: 14px;
+        }
+        
+        .filtro-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        label {
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #2c6b7e;
+            display: block;
+            margin-bottom: 6px;
+        }
+        
+        select, button, input {
+            width: 100%;
+            padding: 14px 12px;
+            border-radius: 14px;
+            border: 1px solid #cbdde6;
+            background: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+            font-family: inherit;
+        }
+        
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232c6b7e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+        }
+        
+        button {
+            background: #1f6e8c;
+            color: white;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        button:active {
+            background: #0c4e66;
+            transform: scale(0.98);
+        }
+        
+        .stats {
+            background: #eef3fa;
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 16px 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .badge-info {
+            background: #d9eef5;
+            padding: 4px 12px;
+            border-radius: 40px;
+            color: #135b74;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-vendedor {
+            background: #e1f0f5;
+            padding: 4px 12px;
+            border-radius: 40px;
+            color: #1a5f7a;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .tabla-wrapper {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid #e4ecf2;
+            background: #fff;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+            min-width: 650px;
+        }
+        
+        th {
+            background: #f1f7fc;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 700;
+            color: #1a4c60;
+            border-bottom: 1px solid #dde6ef;
+            font-size: 0.7rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        td {
+            padding: 10px 10px;
+            border-bottom: 1px solid #ecf3f8;
+            color: #1f2f38;
+            font-size: 0.7rem;
+            word-break: break-word;
+        }
+        
+        tr:active td {
+            background-color: #f0f7fa;
+        }
+        
+        .empty-row td {
+            text-align: center;
+            padding: 40px 16px !important;
+            color: #6b8b9b;
+            font-style: italic;
+        }
+        
+        .gaia-badge {
+            background: #e1f0f5;
+            color: #135b74;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            display: inline-block;
+        }
+        
+        .pagada-verde {
+            color: #2e7d32;
+            font-weight: 700;
+            background: #e8f5e9;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.65rem;
+        }
+        
+        .valor-rojo {
+            color: #d32f2f;
+            font-weight: 700;
+            background: #ffebee;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.65rem;
+        }
+        
+        .valor-cero {
+            color: #2e7d32;
+            font-weight: 500;
+            background: #e8f5e9;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.65rem;
+        }
+        
+        footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.6rem;
+            color: #7895a3;
+            border-top: 1px solid #e0ecf2;
+            padding-top: 16px;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #cbdde6;
+            border-top-color: #1f6e8c;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .refresh-hint {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: #1f6e8c;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 1000;
+            font-size: 20px;
+        }
+        
+        .refresh-hint:active {
+            transform: scale(0.92);
+            background: #0c4e66;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            z-index: 2000;
+            animation: fadeInOut 2s ease;
+            white-space: nowrap;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+        
+        .info-message {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.7rem;
+            color: #0b3b4f;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        select, button, input {
+            font-size: 16px;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .content {
+                padding: 12px;
+            }
+            
+            .filtros-card, .sheet-manager {
+                padding: 12px;
+            }
+            
+            select, button, input {
+                padding: 12px 10px;
+            }
+            
+            .stats {
+                padding: 10px 12px;
+            }
+            
+            .lista-hojas-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            
+            .lista-hojas-item .url {
+                width: 100%;
+            }
+            
+            .toast {
+                white-space: normal;
+                text-align: center;
+                max-width: 90%;
+            }
+        }
+        
+        .admin-only {
+            display: none;
+        }
+        
+        .admin-only.visible {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>
+                📊 CONSULTA CALIDAD
+                <small>GAIA</small>
+                <span id="roleBadge" class="user-badge">👤 USUARIO</span>
+            </h1>
+        </div>
+        <div class="content">
+            <!-- Mensaje informativo para usuarios -->
+            <div class="info-message" id="infoMessage">
+                💡 Las hojas disponibles son configuradas por el administrador y están visibles para todos los usuarios.
+            </div>
+            
+            <!-- Selector de Hojas -->
+            <div class="sheet-manager">
+                <div class="sheet-selector-row">
+                    <select id="sheetSelect">
+                        <option value="">-- Seleccione una hoja --</option>
+                    </select>
+                    <button class="btn-icon share" id="btnShareConfig" title="Compartir esta configuración">🔗</button>
+                    <button class="btn-icon admin-login" id="btnAdminLogin" title="Acceso administrador">👑</button>
+                </div>
+                <div class="sheet-status" id="sheetStatus">
+                    <span class="sheet-badge" id="hojaActualInfo">📄 Ninguna hoja seleccionada</span>
+                    <span class="sheet-badge" id="configInfo">💾 Configuración compartida vía URL</span>
+                </div>
+            </div>
+            
+            <!-- Botones de administrador (ocultos para usuarios normales) -->
+            <div id="adminButtons" class="admin-only" style="display: none; gap: 10px; margin-bottom: 16px;">
+                <button id="btnAddSheet" style="background: #4caf50; flex: 1;">➕ Agregar hoja</button>
+                <button id="btnEditSheets" style="background: #ff9800; flex: 1;">✏️ Gestionar hojas</button>
+            </div>
+            
+            <div class="filtros-card">
+                <div class="filtro-group">
+                    <label>👥 SUPERVISOR</label>
+                    <select id="supervisorSelect">
+                        <option value="">-- Cargando --</option>
+                    </select>
+                </div>
+                <div class="filtro-group">
+                    <label>🔢 CÓDIGO MAESTRO</label>
+                    <select id="vendedorSelect" disabled>
+                        <option value="">-- Elige un supervisor primero --</option>
+                    </select>
+                </div>
+                <div class="filtro-group">
+                    <button id="limpiarBtn">⟳ Limpiar filtros</button>
+                </div>
+            </div>
+
+            <div class="stats" id="statsPanel">
+                <div class="stats-row">
+                    <span><span class="loading-spinner"></span> Cargando...</span>
+                    <span class="badge-info" id="contadorRegistros">--</span>
+                </div>
+                <div class="stats-row" id="vendedorInfo" style="display: none;">
+                    <span>👤 Vendedor asociado:</span>
+                    <span class="badge-vendedor" id="nombreVendedor">--</span>
+                </div>
+            </div>
+
+            <div class="tabla-wrapper">
+                <table id="dataTable">
+                    <thead id="tableHeader">
+                        汽<th>Cargando datos...</th>\\
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="empty-row"><td colspan="10">📋 Selecciona una hoja para comenzar<br><span style="font-size: 0.65rem;">Las hojas disponibles son configuradas por el administrador</span>     </td></tr>
+                    </tbody>
+                 </table>
+            </div>
+            <footer>
+                📌 Las hojas configuradas por el administrador son visibles para todos los usuarios al compartir el enlace
+            </footer>
+        </div>
+    </div>
+    
+    <div class="refresh-hint" id="refreshBtn" title="Actualizar datos">
+        🔄
+    </div>
+
+    <!-- Modal para agregar/editar hojas (solo admin) -->
+    <div id="sheetModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Agregar nueva hoja</h3>
+            <input type="text" id="sheetName" placeholder="Nombre de la hoja (ej: Enero 2024)" autocomplete="off">
+            <textarea id="sheetUrl" placeholder="URL de publicación CSV de Google Sheets&#10;&#10;Para obtenerla:&#10;1. Archivo → Publicar en la web&#10;2. Selecciona la hoja&#10;3. Formato: CSV&#10;4. Copia el enlace"></textarea>
+            <div class="modal-buttons">
+                <button id="btnSaveSheet" class="btn-save">💾 Guardar</button>
+                <button id="btnCancelModal" class="btn-cancel">❌ Cancelar</button>
+            </div>
+            <div class="lista-hojas" id="listaHojasContainer">
+                <h4 style="margin: 8px 0; font-size: 0.8rem;">📑 Hojas visibles para todos los usuarios</h4>
+                <div id="listaHojas"></div>
+                <p style="font-size: 0.65rem; color: #7895a3; margin-top: 8px;">🔗 Las hojas se guardan en la URL. Al compartir el enlace, TODOS los usuarios verán estas mismas hojas.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para login de administrador -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <h3>👑 Acceso Administrador</h3>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 12px;">Ingresa la contraseña para gestionar las hojas que serán visibles para todos los usuarios.</p>
+            <div class="login-input">
+                <input type="password" id="adminPassword" placeholder="Contraseña de administrador" autocomplete="off">
+            </div>
+            <div class="modal-buttons">
+                <button id="btnLoginAdmin">🔓 Ingresar</button>
+                <button id="btnCancelAdmin" class="btn-cancel">❌ Cancelar</button>
+            </div>
+            <p style="font-size: 0.7rem; color: #7895a3; margin-top: 12px;">⚠️ Solo el administrador puede agregar o modificar hojas. Los cambios serán visibles para todos los usuarios al compartir el enlace.</p>
+        </div>
+    </div>
+
+    <script>
+        // CLAVE DE ADMINISTRADOR (cámbiala por la que quieras)
+        const ADMIN_KEY = 'Comsertel2024';
+        
+        // Estado de administrador
+        let isAdmin = false;
+        
+        // Almacenamiento de hojas en URL (esto es lo que se comparte)
+        let HOJAS_CONFIG = {};
+        
+        // Función para verificar si es administrador desde URL
+        function checkAdminFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const adminToken = urlParams.get('admin');
+            if (adminToken === ADMIN_KEY) {
+                isAdmin = true;
+                return true;
+            }
+            return false;
+        }
+        
+        // Función para guardar estado admin en URL
+        function setAdminInURL(isAdminMode) {
+            const url = new URL(window.location.href);
+            if (isAdminMode) {
+                url.searchParams.set('admin', ADMIN_KEY);
+            } else {
+                url.searchParams.delete('admin');
+            }
+            window.history.replaceState({}, '', url);
+        }
+        
+        // Mostrar/ocultar elementos según rol
+        function updateUIBasedOnRole() {
+            const adminButtons = document.getElementById('adminButtons');
+            const roleBadge = document.getElementById('roleBadge');
+            const infoMessage = document.getElementById('infoMessage');
+            
+            if (isAdmin) {
+                adminButtons.style.display = 'flex';
+                roleBadge.innerHTML = '👑 ADMINISTRADOR';
+                roleBadge.className = 'admin-badge';
+                document.getElementById('btnAdminLogin').style.opacity = '0.7';
+                document.getElementById('btnAdminLogin').title = 'Modo administrador activo';
+                if (infoMessage) {
+                    infoMessage.innerHTML = '👑 Estás en modo administrador. Puedes agregar, editar o eliminar hojas. Todos los usuarios verán tus cambios al compartir el enlace.';
+                    infoMessage.style.background = '#fff3e0';
+                    infoMessage.style.borderLeftColor = '#ff9800';
+                }
+            } else {
+                adminButtons.style.display = 'none';
+                roleBadge.innerHTML = '👤 USUARIO';
+                roleBadge.className = 'user-badge';
+                document.getElementById('btnAdminLogin').style.opacity = '1';
+                document.getElementById('btnAdminLogin').title = 'Acceso administrador';
+                if (infoMessage) {
+                    infoMessage.innerHTML = '💡 Las hojas disponibles son configuradas por el administrador y están visibles para todos los usuarios.';
+                    infoMessage.style.background = '#e3f2fd';
+                    infoMessage.style.borderLeftColor = '#2196f3';
+                }
+            }
+        }
+        
+        // Función para codificar configuración en URL
+        function guardarConfiguracionEnURL() {
+            const configStr = JSON.stringify(HOJAS_CONFIG);
+            const encoded = btoa(encodeURIComponent(configStr));
+            const url = new URL(window.location.href);
+            url.searchParams.set('sheets', encoded);
+            window.history.replaceState({}, '', url);
+            document.getElementById('configInfo').innerHTML = '💾 Configuración compartida vía URL';
+        }
+        
+        // Función para cargar configuración desde URL
+        function cargarConfiguracionDesdeURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encoded = urlParams.get('sheets');
+            
+            if (encoded) {
+                try {
+                    const decoded = decodeURIComponent(atob(encoded));
+                    const config = JSON.parse(decoded);
+                    if (config && typeof config === 'object' && Object.keys(config).length > 0) {
+                        HOJAS_CONFIG = config;
+                        return true;
+                    }
+                } catch(e) {
+                    console.error('Error al cargar configuración desde URL:', e);
+                }
+            }
+            return false;
+        }
+        
+        // Cargar hojas guardadas
+        function cargarHojasGuardadas() {
+            if (!cargarConfiguracionDesdeURL()) {
+                // Configuración por defecto si no hay nada en URL
+                HOJAS_CONFIG = {
+                    'Ejemplo (Principal)': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkqfIPL7uHoVqoOtwv34GQjNWuvE3VMmHqpGVdBzPpHTdWN47ku5gOX22U0wnZ5Q/pub?output=csv'
+                };
+                guardarConfiguracionEnURL();
+            }
+        }
+        
+        function guardarHojas() {
+            guardarConfiguracionEnURL();
+            actualizarSelectorHojas();
+            if (isAdmin) {
+                actualizarListaHojas();
+                mostrarToast('✅ Hojas actualizadas. Todos los usuarios verán estos cambios al compartir el enlace.');
+            }
+        }
+        
+        function mostrarToast(mensaje) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = mensaje;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        let datosOriginales = [];
+        let columnas = [];
+        let supervisoresSet = new Set();
+        let mapaSupVendedores = new Map();
+        let mapaCodigoVendedor = new Map();
+        
+        let idxSupervisor = -1, idxVendedor = -1, idxGaia = -1, idxFact1 = -1, idxFact2 = -1, idxFact3 = -1;
+        let idxCodigoMaestro = -1;
+        
+        let isLoading = false;
+        let totalExcluidos = 0;
+        let hojaActual = '';
+        
+        function recuperarUltimaHoja() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ultima = urlParams.get('hoja');
+            if (ultima && HOJAS_CONFIG[ultima]) {
+                return ultima;
+            }
+            return '';
+        }
+        
+        function guardarUltimaHoja(nombre) {
+            const url = new URL(window.location.href);
+            if (nombre) {
+                url.searchParams.set('hoja', nombre);
+            } else {
+                url.searchParams.delete('hoja');
+            }
+            window.history.replaceState({}, '', url);
+        }
+        
+        function esPagada(valor) {
+            if (!valor) return false;
+            const textoLimpio = valor.toString().trim().toUpperCase();
+            return textoLimpio === 'PAGADA';
+        }
+        
+        function esCero(valor) {
+            if (!valor) return false;
+            const textoLimpio = valor.toString().trim();
+            return textoLimpio === '$0,00' || textoLimpio === '0' || textoLimpio === '0.00';
+        }
+        
+        function debeExcluir(row) {
+            const factura1 = row[columnas[idxFact1]] || '';
+            const factura2 = row[columnas[idxFact2]] || '';
+            const factura3 = row[columnas[idxFact3]] || '';
+            const todasPagadas = esPagada(factura1) && esPagada(factura2) && esPagada(factura3);
+            return todasPagadas;
+        }
+        
+        function getFacturaHtml(valor) {
+            if (!valor) return '<span style="color: #999;">—</span>';
+            if (esPagada(valor)) {
+                return `<span class="pagada-verde">✅ ${escapeHtml(valor)}</span>`;
+            }
+            if (esCero(valor)) {
+                return `<span class="valor-cero">💰 ${escapeHtml(valor)}</span>`;
+            }
+            return `<span class="valor-rojo">⚠️ ${escapeHtml(valor)}</span>`;
+        }
+        
+        function parseCSV(csvText) {
+            const filas = [];
+            let currentRow = [];
+            let currentField = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < csvText.length; i++) {
+                const ch = csvText[i];
+                if (ch === '"') {
+                    inQuotes = !inQuotes;
+                } else if (ch === ',' && !inQuotes) {
+                    currentRow.push(currentField.trim());
+                    currentField = '';
+                } else if ((ch === '\n' || (ch === '\r' && csvText[i+1] === '\n')) && !inQuotes) {
+                    currentRow.push(currentField.trim());
+                    if (currentRow.length > 0 && !(currentRow.length === 1 && currentRow[0] === '')) {
+                        filas.push(currentRow);
+                    }
+                    currentRow = [];
+                    currentField = '';
+                    if (ch === '\r') i++;
+                } else {
+                    currentField += ch;
+                }
+            }
+            if (currentField !== '' || currentRow.length > 0) {
+                currentRow.push(currentField.trim());
+                if (currentRow.length > 0 && !(currentRow.length === 1 && currentRow[0] === '')) {
+                    filas.push(currentRow);
+                }
+            }
+            return filas;
+        }
+        
+        async function cargarDatosCSV(url, showLoading = true) {
+            if (isLoading) return false;
+            isLoading = true;
+            
+            try {
+                if (showLoading) {
+                    const statsDiv = document.getElementById('statsPanel');
+                    statsDiv.innerHTML = `<div class="stats-row"><span><span class="loading-spinner"></span> Cargando hoja...</span><span class="badge-info">--</span></div>
+                                          <div class="stats-row" id="vendedorInfo" style="display: none;"></div>`;
+                }
+                
+                const response = await fetch(url, {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const csvText = await response.text();
+                if (!csvText.trim()) throw new Error('CSV vacío');
+                
+                const filas = parseCSV(csvText);
+                if (filas.length < 2) throw new Error('Sin datos válidos');
+                
+                const rawHeaders = filas[0].map(h => h.replace(/^"|"$/g, '').trim());
+                columnas = rawHeaders.map(h => h.toUpperCase());
+                
+                idxSupervisor = columnas.findIndex(c => c === 'SUPERVISOR');
+                idxVendedor = columnas.findIndex(c => c === 'VENDEDOR');
+                idxGaia = columnas.findIndex(c => c === 'GAIA');
+                idxFact1 = columnas.findIndex(c => c === 'FACTURA 1');
+                idxFact2 = columnas.findIndex(c => c === 'FACTURA 2');
+                idxFact3 = columnas.findIndex(c => c === 'FACTURA 3');
+                
+                idxCodigoMaestro = columnas.findIndex(c => c === 'CÓDIGO MAESTRO' || c === 'CODIGO MAESTRO' || c === 'CODIGO_MAESTRO' || c === 'CODIGOMAESTRO');
+                
+                if (idxGaia === -1) throw new Error('No se encontró columna GAIA');
+                
+                datosOriginales = [];
+                supervisoresSet.clear();
+                mapaSupVendedores.clear();
+                mapaCodigoVendedor.clear();
+                totalExcluidos = 0;
+                
+                for (let i = 1; i < filas.length; i++) {
+                    const rowValues = filas[i];
+                    if (rowValues.length < columnas.length) continue;
+                    const filaObj = {};
+                    for (let j = 0; j < columnas.length; j++) {
+                        let valor = rowValues[j] || '';
+                        valor = valor.replace(/^"|"$/g, '').trim();
+                        filaObj[columnas[j]] = valor;
+                    }
+                    
+                    if (debeExcluir(filaObj)) {
+                        totalExcluidos++;
+                        continue;
+                    }
+                    
+                    datosOriginales.push(filaObj);
+                    
+                    const sup = filaObj[columnas[idxSupervisor]] || '';
+                    let vend = '';
+                    
+                    if (idxCodigoMaestro !== -1) {
+                        vend = filaObj[columnas[idxCodigoMaestro]] || '';
+                        const nombreVendedor = filaObj[columnas[idxVendedor]] || '';
+                        if (vend && nombreVendedor) {
+                            if (!mapaCodigoVendedor.has(vend)) {
+                                mapaCodigoVendedor.set(vend, nombreVendedor);
+                            }
+                        }
+                    } else {
+                        vend = filaObj[columnas[idxVendedor]] || '';
+                    }
+                    
+                    if (sup) {
+                        supervisoresSet.add(sup);
+                        if (!mapaSupVendedores.has(sup)) mapaSupVendedores.set(sup, new Set());
+                        if (vend) mapaSupVendedores.get(sup).add(vend);
+                    }
+                }
+                
+                return true;
+            } catch (error) {
+                console.error(error);
+                document.getElementById('statsPanel').innerHTML = `<div class="stats-row"><span>⚠️ Error: ${error.message}</span><span class="badge-info">--</span></div>`;
+                document.getElementById('tableBody').innerHTML = '<tr class="empty-row"><td colspan="10">❌ Error al cargar datos. Verifica que la hoja esté publicada como CSV. </td></tr>';
+                return false;
+            } finally {
+                isLoading = false;
+            }
+        }
+        
+        function obtenerUnicosPorFiltro(supervisorFiltro, codigoMaestroFiltro) {
+            let filtrados = datosOriginales.filter(row => {
+                if (supervisorFiltro && row[columnas[idxSupervisor]] !== supervisorFiltro) return false;
+                
+                let valorComparar = '';
+                if (idxCodigoMaestro !== -1) {
+                    valorComparar = row[columnas[idxCodigoMaestro]] || '';
+                } else {
+                    valorComparar = row[columnas[idxVendedor]] || '';
+                }
+                
+                if (codigoMaestroFiltro && valorComparar !== codigoMaestroFiltro) return false;
+                return true;
+            });
+            
+            const uniqueMap = new Map();
+            for (const row of filtrados) {
+                const gaia = row[columnas[idxGaia]] || '';
+                const f1 = row[columnas[idxFact1]] || '';
+                const f2 = row[columnas[idxFact2]] || '';
+                const f3 = row[columnas[idxFact3]] || '';
+                const key = `${gaia}§§${f1}§§${f2}§§${f3}`;
+                if (!uniqueMap.has(key)) {
+                    uniqueMap.set(key, row);
+                }
+            }
+            return Array.from(uniqueMap.values());
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        function renderizarTabla() {
+            const supervisor = document.getElementById('supervisorSelect').value;
+            const codigoMaestro = document.getElementById('vendedorSelect').value;
+            
+            const unicos = obtenerUnicosPorFiltro(supervisor || null, codigoMaestro || null);
+            
+            let nombreVendedorMostrar = '';
+            if (codigoMaestro && mapaCodigoVendedor.has(codigoMaestro)) {
+                nombreVendedorMostrar = mapaCodigoVendedor.get(codigoMaestro);
+            }
+            
+            const statsDiv = document.getElementById('statsPanel');
+            statsDiv.innerHTML = `
+                <div class="stats-row">
+                    <span>📊 Registros encontrados</span>
+                    <span class="badge-info">${unicos.length}</span>
+                </div>
+                <div class="stats-row" id="vendedorInfo" style="${nombreVendedorMostrar || codigoMaestro ? 'display: flex;' : 'display: none;'}">
+                    ${nombreVendedorMostrar ? '<span>👤 Vendedor asociado:</span><span class="badge-vendedor">' + escapeHtml(nombreVendedorMostrar) + '</span>' : (codigoMaestro ? '<span>🔢 Código Maestro:</span><span class="badge-vendedor">' + escapeHtml(codigoMaestro) + '</span>' : '')}
+                </div>
+            `;
+            
+            const thead = document.getElementById('tableHeader');
+            const tbody = document.getElementById('tableBody');
+            const columnasMostrar = columnas.slice(0, 10);
+            thead.innerHTML = '<tr>' + columnasMostrar.map(col => `<th>${escapeHtml(col)}</th>`).join('') + '</tr>';
+            
+            if (unicos.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="${columnasMostrar.length}">✨ No hay resultados con estos filtros ✨</td></tr>`;
+                return;
+            }
+            
+            let html = '';
+            for (const row of unicos) {
+                html += '<tr>';
+                for (let i = 0; i < columnasMostrar.length; i++) {
+                    let valor = row[columnasMostrar[i]] || '';
+                    const colNombre = columnasMostrar[i].toUpperCase();
+                    
+                    if (colNombre === 'GAIA' && valor) {
+                        valor = `<span class="gaia-badge">📌 ${escapeHtml(valor)}</span>`;
+                    } else if (colNombre === 'FACTURA 1' || colNombre === 'FACTURA 2' || colNombre === 'FACTURA 3') {
+                        valor = getFacturaHtml(valor);
+                    } else {
+                        valor = escapeHtml(valor);
+                    }
+                    html += `<td>${valor}</td>`;
+                }
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+        
+        function poblarSelectores() {
+            const supSelect = document.getElementById('supervisorSelect');
+            const vendSelect = document.getElementById('vendedorSelect');
+            const supervisoresOrdenados = Array.from(supervisoresSet).sort();
+            supSelect.innerHTML = '<option value="">-- Todos los supervisores --</option>';
+            supervisoresOrdenados.forEach(sup => {
+                supSelect.innerHTML += `<option value="${escapeHtml(sup)}">${escapeHtml(sup)}</option>`;
+            });
+            
+            supSelect.onchange = () => {
+                const supElegido = supSelect.value;
+                if (!supElegido) {
+                    vendSelect.innerHTML = '<option value="">-- Todos los códigos maestro --</option>';
+                    vendSelect.disabled = false;
+                } else {
+                    const vendedoresSet = mapaSupVendedores.get(supElegido) || new Set();
+                    const vendedoresArr = Array.from(vendedoresSet).sort();
+                    vendSelect.innerHTML = '<option value="">-- Todos los códigos maestro --</option>';
+                    vendedoresArr.forEach(vend => {
+                        let textoMostrar = vend;
+                        if (mapaCodigoVendedor.has(vend)) {
+                            textoMostrar = `${vend} - ${mapaCodigoVendedor.get(vend)}`;
+                        }
+                        vendSelect.innerHTML += `<option value="${escapeHtml(vend)}">${escapeHtml(textoMostrar)}</option>`;
+                    });
+                    vendSelect.disabled = false;
+                }
+                renderizarTabla();
+            };
+            
+            vendSelect.onchange = () => renderizarTabla();
+            document.getElementById('limpiarBtn').onclick = () => {
+                supSelect.value = '';
+                vendSelect.innerHTML = '<option value="">-- Todos los códigos maestro --</option>';
+                vendSelect.disabled = false;
+                renderizarTabla();
+            };
+            vendSelect.disabled = false;
+        }
+        
+        async function cambiarHoja(hojaNombre) {
+            const url = HOJAS_CONFIG[hojaNombre];
+            if (!url) return;
+            
+            hojaActual = hojaNombre;
+            guardarUltimaHoja(hojaActual);
+            document.getElementById('hojaActualInfo').innerHTML = `📄 Hoja activa: ${escapeHtml(hojaActual)}`;
+            
+            const ok = await cargarDatosCSV(url, true);
+            if (ok) {
+                poblarSelectores();
+                renderizarTabla();
+            }
+        }
+        
+        function actualizarSelectorHojas() {
+            const sheetSelect = document.getElementById('sheetSelect');
+            const hojaActualGuardada = hojaActual;
+            sheetSelect.innerHTML = '<option value="">-- Seleccione una hoja --</option>';
+            
+            const hojasOrdenadas = Object.keys(HOJAS_CONFIG).sort();
+            hojasOrdenadas.forEach(nombreHoja => {
+                sheetSelect.innerHTML += `<option value="${escapeHtml(nombreHoja)}">${escapeHtml(nombreHoja)}</option>`;
+            });
+            
+            if (hojaActualGuardada && HOJAS_CONFIG[hojaActualGuardada]) {
+                sheetSelect.value = hojaActualGuardada;
+            }
+            
+            sheetSelect.onchange = () => {
+                const hojaSeleccionada = sheetSelect.value;
+                if (hojaSeleccionada) {
+                    cambiarHoja(hojaSeleccionada);
+                }
+            };
+        }
+        
+        function actualizarListaHojas() {
+            const container = document.getElementById('listaHojas');
+            if (!container) return;
+            
+            const hojas = Object.keys(HOJAS_CONFIG);
+            if (hojas.length === 0) {
+                container.innerHTML = '<div style="color: #999; text-align: center; padding: 16px;">No hay hojas configuradas</div>';
+                return;
+            }
+            
+            let html = '';
+            hojas.forEach(nombre => {
+                const urlCorta = HOJAS_CONFIG[nombre].length > 50 ? HOJAS_CONFIG[nombre].substring(0, 50) + '...' : HOJAS_CONFIG[nombre];
+                html += `
+                    <div class="lista-hojas-item">
+                        <div class="nombre">📄 ${escapeHtml(nombre)}</div>
+                        <div class="url" title="${escapeHtml(HOJAS_CONFIG[nombre])}">${escapeHtml(urlCorta)}</div>
+                        <div class="acciones">
+                            <button onclick="editarHoja('${escapeHtml(nombre).replace(/'/g, "\\'")}')" style="background:#ff9800;">✏️</button>
+                            <button onclick="eliminarHoja('${escapeHtml(nombre).replace(/'/g, "\\'")}')" style="background:#e74c3c;">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+        
+        window.editarHoja = function(nombre) {
+            if (!isAdmin) return;
+            document.getElementById('modalTitle').innerText = 'Editar hoja';
+            document.getElementById('sheetName').value = nombre;
+            document.getElementById('sheetUrl').value = HOJAS_CONFIG[nombre] || '';
+            document.getElementById('sheetModal').classList.add('active');
+            window.editandoHoja = nombre;
+        };
+        
+        window.eliminarHoja = function(nombre) {
+            if (!isAdmin) return;
+            if (confirm(`¿Eliminar la hoja "${nombre}"?\n\nTodos los usuarios dejarán de ver esta hoja.`)) {
+                delete HOJAS_CONFIG[nombre];
+                guardarHojas();
+                if (hojaActual === nombre) {
+                    hojaActual = '';
+                    guardarUltimaHoja('');
+                    document.getElementById('hojaActualInfo').innerHTML = '📄 Ninguna hoja seleccionada';
+                    document.getElementById('tableBody').innerHTML = '<tr class="empty-row"><td colspan="10">📋 Selecciona una hoja para comenzar</td></tr>';
+                    document.getElementById('statsPanel').innerHTML = `<div class="stats-row"><span>📊 Registros encontrados</span><span class="badge-info">--</span></div>`;
+                }
+                actualizarSelectorHojas();
+                mostrarToast('✅ Hoja eliminada. Los usuarios ya no verán esta hoja.');
+            }
+        };
+        
+        function guardarHojaActual() {
+            const nombre = document.getElementById('sheetName').value.trim();
+            const url = document.getElementById('sheetUrl').value.trim();
+            
+            if (!nombre) {
+                alert('Por favor ingresa un nombre para la hoja');
+                return false;
+            }
+            if (!url) {
+                alert('Por favor ingresa la URL del CSV');
+                return false;
+            }
+            if (!url.includes('docs.google.com') && !url.includes('output=csv')) {
+                if (!confirm('La URL no parece ser de Google Sheets CSV. ¿Deseas guardarla de todos modos?')) {
+                    return false;
+                }
+            }
+            
+            HOJAS_CONFIG[nombre] = url;
+            guardarHojas();
+            mostrarToast('✅ Hoja guardada. Todos los usuarios podrán verla al compartir el enlace.');
+            return true;
+        }
+        
+        // Eventos de administrador
+        document.getElementById('btnShareConfig').onclick = () => {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                mostrarToast('✅ Enlace copiado al portapapeles. Compártelo para que otros vean la misma configuración de hojas.');
+            }).catch(() => {
+                mostrarToast('📋 Copia manualmente la URL de la barra de direcciones');
+            });
+        };
+        
+        document.getElementById('btnAdminLogin').onclick = () => {
+            document.getElementById('adminModal').classList.add('active');
+        };
+        
+        document.getElementById('btnLoginAdmin').onclick = () => {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_KEY) {
+                isAdmin = true;
+                setAdminInURL(true);
+                updateUIBasedOnRole();
+                document.getElementById('adminModal').classList.remove('active');
+                document.getElementById('adminPassword').value = '';
+                mostrarToast('👑 Modo administrador activado. Puedes gestionar las hojas.');
+                actualizarListaHojas();
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        };
+        
+        document.getElementById('btnCancelAdmin').onclick = () => {
+            document.getElementById('adminModal').classList.remove('active');
+            document.getElementById('adminPassword').value = '';
+        };
+        
+        document.getElementById('btnAddSheet').onclick = () => {
+            if (!isAdmin) return;
+            document.getElementById('modalTitle').innerText = 'Agregar nueva hoja';
+            document.getElementById('sheetName').value = '';
+            document.getElementById('sheetUrl').value = '';
+            document.getElementById('sheetModal').classList.add('active');
+            window.editandoHoja = null;
+        };
+        
+        document.getElementById('btnEditSheets').onclick = () => {
+            if (!isAdmin) return;
+            document.getElementById('modalTitle').innerText = 'Gestionar hojas';
+            document.getElementById('sheetName').value = '';
+            document.getElementById('sheetUrl').value = '';
+            document.getElementById('sheetModal').classList.add('active');
+            window.editandoHoja = null;
+            actualizarListaHojas();
+        };
+        
+        document.getElementById('btnSaveSheet').onclick = () => {
+            if (!isAdmin) return;
+            if (guardarHojaActual()) {
+                document.getElementById('sheetModal').classList.remove('active');
+                if (window.editandoHoja) {
+                    if (hojaActual === window.editandoHoja) {
+                        cambiarHoja(window.editandoHoja);
+                    }
+                }
+                window.editandoHoja = null;
+            }
+        };
+        
+        document.getElementById('btnCancelModal').onclick = () => {
+            document.getElementById('sheetModal').classList.remove('active');
+            window.editandoHoja = null;
+        };
+        
+        document.getElementById('refreshBtn').onclick = async () => {
+            const btn = document.getElementById('refreshBtn');
+            btn.style.transform = 'rotate(360deg)';
+            setTimeout(() => { btn.style.transform = ''; }, 300);
+            
+            if (hojaActual && HOJAS_CONFIG[hojaActual]) {
+                const ok = await cargarDatosCSV(HOJAS_CONFIG[hojaActual], true);
+                if (ok) {
+                    poblarSelectores();
+                    renderizarTabla();
+                    btn.style.backgroundColor = '#2e7d32';
+                    setTimeout(() => { btn.style.backgroundColor = '#1f6e8c'; }, 300);
+                    mostrarToast('✅ Datos actualizados');
+                }
+            }
+        };
+        
+        async function init() {
+            // Verificar si ya es admin por URL
+            if (checkAdminFromURL()) {
+                isAdmin = true;
+            }
+            
+            cargarHojasGuardadas();
+            actualizarSelectorHojas();
+            updateUIBasedOnRole();
+            
+            if (isAdmin) {
+                actualizarListaHojas();
+            }
+            
+            const ultimaHoja = recuperarUltimaHoja();
+            if (ultimaHoja && HOJAS_CONFIG[ultimaHoja]) {
+                await cambiarHoja(ultimaHoja);
+            } else {
+                document.getElementById('hojaActualInfo').innerHTML = '📄 Ninguna hoja seleccionada';
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>
